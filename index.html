@@ -1,1 +1,142 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат-бот Підтримки</title>
+    <!-- Підключення Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<div class="flex flex-col h-[80vh] w-full max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden">
+    <!-- Chat Header -->
+    <div class="flex items-center p-4 bg-purple-600 text-white shadow-lg">
+        <div class="h-10 w-10 rounded-full bg-purple-400 flex items-center justify-center mr-3">
+            <svg class="h-6 w-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+        </div>
+        <h1 class="text-xl font-semibold">Бот підтримки</h1>
+    </div>
+
+    <!-- Chat History -->
+    <div id="chat-history" class="flex-1 p-6 space-y-4 overflow-y-auto">
+        <!-- Messages will be injected here -->
+    </div>
+
+    <!-- Message Input Form -->
+    <div class="p-4 bg-gray-100 border-t border-gray-200">
+        <form id="chat-form" class="flex items-center space-x-3">
+            <input id="user-input" type="text" placeholder="Напишіть своє повідомлення..." class="flex-1 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-200">
+            <button type="submit" class="bg-purple-600 text-white p-3 rounded-lg font-semibold hover:bg-purple-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+                Відправити
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Get DOM elements
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
+    const chatHistory = document.getElementById('chat-history');
+
+    // Display a message in the chat history
+    function displayMessage(text, isUser) {
+        const messageContainer = document.createElement('div');
+        const bubble = document.createElement('div');
+        
+        // Add classes based on who sent the message
+        if (isUser) {
+            messageContainer.className = 'flex justify-end';
+            bubble.className = 'message-bubble bg-purple-500 text-white';
+        } else {
+            messageContainer.className = 'flex justify-start';
+            bubble.className = 'message-bubble bg-gray-200 text-gray-800';
+        }
+        
+        bubble.textContent = text;
+        messageContainer.appendChild(bubble);
+        chatHistory.appendChild(messageContainer);
+        
+        // Scroll to the bottom of the chat history
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+
+    // A simple function to simulate a bot response
+    function getBotResponse(message) {
+        const lowerCaseMessage = message.toLowerCase();
+        
+        if (lowerCaseMessage.includes('привіт') || lowerCaseMessage.includes('вітаю')) {
+            return 'Привіт! Чим можу допомогти?';
+        } else if (lowerCaseMessage.includes('як створити акаунт')) {
+            return 'Для створення акаунта, будь ласка, перейдіть до розділу "Реєстрація" на головній сторінці.';
+        } else if (lowerCaseMessage.includes('змінити пароль')) {
+            return 'Щоб змінити пароль, увійдіть до свого профілю та знайдіть опцію "Налаштування облікового запису".';
+        } else if (lowerCaseMessage.includes('дякую') || lowerCaseMessage.includes('спасибі')) {
+            return 'Будь ласка! Завжди радий допомогти.';
+        } else if (lowerCaseMessage.includes('до побачення') || lowerCaseMessage.includes('бувай')) {
+            return 'До побачення! Звертайтеся, якщо виникнуть інші питання.';
+        } else {
+            return 'Вибачте, я не можу відповісти на це питання. Будь ласка, спробуйте сформулювати його інакше або зверніться до нашої служби підтримки.';
+        }
+    }
+
+    // Handle form submission
+    chatForm.addEventListener('submit', (event) => {
+        // Prevent default form submission behavior
+        event.preventDefault();
+        
+        const message = userInput.value.trim();
+        
+        // Check if the input is not empty
+        if (message === '') {
+            // Show a custom message box instead of an alert
+            const messageBox = document.createElement('div');
+            messageBox.textContent = 'Поле повідомлення не може бути порожнім!';
+            messageBox.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-red-500 text-white rounded-lg shadow-lg z-50';
+            document.body.appendChild(messageBox);
+            setTimeout(() => messageBox.remove(), 2000); // Remove after 2 seconds
+            return;
+        }
+
+        // Display user's message
+        displayMessage(message, true);
+        
+        // Get and display bot's response after a short delay
+        const botResponse = getBotResponse(message);
+        setTimeout(() => {
+            displayMessage(botResponse, false);
+        }, 500);
+        
+        // Clear the input field
+        userInput.value = '';
+    });
+
+    // Display initial greeting message from the bot
+    window.onload = function() {
+      displayMessage('Привіт! Я твій віртуальний помічник. Чим можу бути корисним?', false);
+    };
+</script>
+
+</body>
+</html>
 
